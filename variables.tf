@@ -1,4 +1,4 @@
-variable "tpl_local_name" {
+variable "mysql_flexible_server" {
   type        = any
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
@@ -6,7 +6,7 @@ variable "tpl_local_name" {
 
 locals {
   default = {
-    tpl_local_name = {
+    mysql_flexible_server = {
       name = ""
       tags = {}
     }
@@ -16,17 +16,17 @@ locals {
     compare and merge custom and default values
   */
   tpl_local_name_values = {
-    for tpl_local_name in keys(var.tpl_local_name) :
-    tpl_local_name => merge(local.default.tpl_local_name, var.tpl_local_name[tpl_local_name])
+    for mysql_flexible_server in keys(var.mysql_flexible_server) :
+    mysql_flexible_server => merge(local.default.mysql_flexible_server, var.mysql_flexible_server[mysql_flexible_server])
   }
 
   /**
     deep merge of all custom and default values
   */
-  tpl_local_name = {
-    for tpl_local_name in keys(var.tpl_local_name) :
-    tpl_local_name => merge(
-      local.tpl_local_name_values[tpl_local_name],
+  mysql_flexible_server = {
+    for mysql_flexible_server in keys(var.mysql_flexible_server) :
+    mysql_flexible_server => merge(
+      local.tpl_local_name_values[mysql_flexible_server],
       {}
     )
   }

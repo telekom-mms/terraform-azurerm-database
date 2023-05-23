@@ -1,9 +1,9 @@
-output "tpl_local_name" {
+output "mysql_flexible_server" {
   description = "Outputs all attributes of resource_type."
   value = {
-    for tpl_local_name in keys(tpl_resource_type.tpl_local_name) :
-    tpl_local_name => {
-      for key, value in tpl_resource_type.tpl_local_name[tpl_local_name] :
+    for mysql_flexible_server in keys(tpl_resource_type.mysql_flexible_server) :
+    mysql_flexible_server => {
+      for key, value in tpl_resource_type.mysql_flexible_server[mysql_flexible_server] :
       key => value
     }
   }
@@ -17,9 +17,9 @@ output "variables" {
       variable => local.default[variable]
     }
     merged = {
-      tpl_local_name = {
-        for key in keys(var.tpl_local_name) :
-        key => local.tpl_local_name[key]
+      mysql_flexible_server = {
+        for key in keys(var.mysql_flexible_server) :
+        key => local.mysql_flexible_server[key]
       }
     }
   }
