@@ -78,6 +78,16 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   tags = local.mysql_flexible_server[each.key].tags
 }
 
+resource "azurerm_mysql_flexible_database" "mysql_flexible_database" {
+  for_each = var.mysql_flexible_database
+
+  name                = local.mysql_flexible_database[each.key].name == "" ? each.key : local.mysql_flexible_database[each.key].name
+  resource_group_name = local.mysql_flexible_database[each.key].resource_group_name
+  server_name         = local.mysql_flexible_database[each.key].server_name
+  charset             = local.mysql_flexible_database[each.key].charset
+  collation           = local.mysql_flexible_database[each.key].collation
+}
+
 resource "azurerm_mysql_flexible_server_firewall_rule" "mysql_flexible_server_firewall_rule" {
   for_each = var.mysql_flexible_server_firewall_rule
 

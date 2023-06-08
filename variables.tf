@@ -3,6 +3,11 @@ variable "mysql_flexible_server" {
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
+variable "mysql_flexible_database" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
 variable "mysql_flexible_server_firewall_rule" {
   type        = any
   default     = {}
@@ -49,6 +54,11 @@ locals {
       }
       tags = {}
     }
+    mysql_flexible_database = {
+      name      = ""
+      charset   = "utf8"
+      collation = "utf8_unicode_ci"
+    }
     mysql_flexible_server_firewall_rule = {
       name = ""
     }
@@ -80,6 +90,10 @@ locals {
         config => merge(local.default.mysql_flexible_server[config], local.mysql_flexible_server_values[mysql_flexible_server][config])
       }
     )
+  }
+  mysql_flexible_database = {
+    for mysql_flexible_database in keys(var.mysql_flexible_database) :
+    mysql_flexible_database => merge(local.default.mysql_flexible_database, var.mysql_flexible_database[mysql_flexible_database])
   }
   mysql_flexible_server_firewall_rule = {
     for mysql_flexible_server_firewall_rule in keys(var.mysql_flexible_server_firewall_rule) :
