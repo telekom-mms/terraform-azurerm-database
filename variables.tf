@@ -56,8 +56,8 @@ locals {
     }
     mysql_flexible_database = {
       name      = ""
-      charset   = "utf8"
-      collation = "utf8_unicode_ci"
+      charset   = "utf8mb4"
+      collation = "utf8mb4_unicode_ci"
     }
     mysql_flexible_server_firewall_rule = {
       name = ""
