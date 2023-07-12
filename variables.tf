@@ -3,6 +3,11 @@ variable "mysql_flexible_server" {
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
+variable "mysql_flexible_server_configuration" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
 variable "mysql_flexible_database" {
   type        = any
   default     = {}
@@ -54,6 +59,9 @@ locals {
       }
       tags = {}
     }
+    mysql_flexible_server_configuration = {
+      name = ""
+    }
     mysql_flexible_database = {
       name      = ""
       charset   = "utf8mb4"
@@ -90,6 +98,10 @@ locals {
         config => merge(local.default.mysql_flexible_server[config], local.mysql_flexible_server_values[mysql_flexible_server][config])
       }
     )
+  }
+  mysql_flexible_server_configuration = {
+    for mysql_flexible_server_configuration in keys(var.mysql_flexible_server_configuration) :
+    mysql_flexible_server_configuration => merge(local.default.mysql_flexible_server_configuration, var.mysql_flexible_server_configuration[mysql_flexible_server_configuration])
   }
   mysql_flexible_database = {
     for mysql_flexible_database in keys(var.mysql_flexible_database) :

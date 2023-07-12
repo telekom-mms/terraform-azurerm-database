@@ -78,6 +78,15 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   tags = local.mysql_flexible_server[each.key].tags
 }
 
+resource "azurerm_mysql_flexible_server_configuration" "mysql_flexible_server_configuration" {
+  for_each = var.mysql_flexible_server_configuration
+
+  name                = local.mysql_flexible_server_configuration[each.key].name == "" ? each.key : local.mysql_flexible_server_configuration[each.key].name
+  resource_group_name = local.mysql_flexible_server_configuration[each.key].resource_group_name
+  server_name         = local.mysql_flexible_server_configuration[each.key].server_name
+  value               = local.mysql_flexible_server_configuration[each.key].value
+}
+
 resource "azurerm_mysql_flexible_database" "mysql_flexible_database" {
   for_each = var.mysql_flexible_database
 

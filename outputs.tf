@@ -9,6 +9,17 @@ output "mysql_flexible_server" {
   }
 }
 
+output "mysql_flexible_server_configuration" {
+  description = "Outputs all attributes of resource_type."
+  value = {
+    for mysql_flexible_server_configuration in keys(azurerm_mysql_flexible_server_configuration.mysql_flexible_server_configuration) :
+    mysql_flexible_server_configuration => {
+      for key, value in azurerm_mysql_flexible_server_configuration.mysql_flexible_server_configuration[mysql_flexible_server_configuration] :
+      key => value
+    }
+  }
+}
+
 output "mysql_flexible_database" {
   description = "Outputs all attributes of resource_type."
   value = {
@@ -42,6 +53,10 @@ output "variables" {
       mysql_flexible_server = {
         for key in keys(var.mysql_flexible_server) :
         key => local.mysql_flexible_server[key]
+      }
+      mysql_flexible_server_configuration = {
+        for key in keys(var.mysql_flexible_server_configuration) :
+        key => local.mysql_flexible_server_configuration[key]
       }
       mysql_flexible_database = {
         for key in keys(var.mysql_flexible_database) :
