@@ -1,11 +1,14 @@
 {
   "repos": {
-    "description": "A Terraform module that manages the tpl_resources resources from the azurerm provider.",
+    "description": "A Terraform module that manages the database resources from the azurerm provider.",
     "visibility": "public",
     "default_branch": "main",
     "topics": [
       "terraform",
-      "azure"
+      "azure",
+      "mysql-flexible-server",
+      "mysql-flexible-database",
+      "mysql-flexible-server-firewall-rule"
     ]
   }
 }
