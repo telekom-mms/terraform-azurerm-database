@@ -19,7 +19,7 @@ module "database" {
       storage = {
         size_gb = 20
       }
-      high_availability = terraform.workspace != "prod" ? {} : {
+      high_availability = {
         mode                      = "ZoneRedundant"
         standby_availability_zone = 2
       }

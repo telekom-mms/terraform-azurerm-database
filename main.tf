@@ -27,7 +27,7 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   zone                              = local.mysql_flexible_server[each.key].zone
 
   dynamic "customer_managed_key" {
-    for_each = flatten(compact(values(local.mysql_flexible_server[each.key].customer_managed_key))) == [] ? [] : [0]
+    for_each = length(compact(values(local.mysql_flexible_server[each.key].customer_managed_key))) > 0 ? [0] : []
 
     content {
       key_vault_key_id                     = local.mysql_flexible_server[each.key].customer_managed_key.key_vault_key_id
@@ -38,7 +38,7 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "high_availability" {
-    for_each = flatten(compact(values(local.mysql_flexible_server[each.key].high_availability))) == [] ? [] : [0]
+    for_each = length(compact(values(local.mysql_flexible_server[each.key].high_availability))) > 0 ? [0] : []
 
     content {
       mode                      = local.mysql_flexible_server[each.key].high_availability.mode
@@ -56,7 +56,7 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "maintenance_window" {
-    for_each = flatten(compact(values(local.mysql_flexible_server[each.key].maintenance_window))) == [] ? [] : [0]
+    for_each = length(compact(values(local.mysql_flexible_server[each.key].maintenance_window))) > 0 ? [0] : []
 
     content {
       day_of_week  = local.mysql_flexible_server[each.key].maintenance_window.day_of_week
@@ -66,7 +66,7 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "storage" {
-    for_each = flatten(compact(values(local.mysql_flexible_server[each.key].storage))) == [] ? [] : [0]
+    for_each = length(compact(values(local.mysql_flexible_server[each.key].storage))) > 0 ? [0] : []
 
     content {
       auto_grow_enabled = local.mysql_flexible_server[each.key].storage.auto_grow_enabled
