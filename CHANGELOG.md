@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.1) (2023-07-19)
+
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.0...1.0.1)
+
+**Closed issues:**
+
+- Dependency Dashboard [\#4](https://github.com/telekom-mms/terraform-azurerm-database/issues/4)
+
 ## [1.0.0](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.0) (2023-07-13)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/eaaec240114a3615a85189b767b8868d6be9a45d...1.0.0)
