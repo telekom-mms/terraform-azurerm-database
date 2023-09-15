@@ -106,3 +106,13 @@ resource "azurerm_mysql_flexible_server_firewall_rule" "mysql_flexible_server_fi
   start_ip_address    = local.mysql_flexible_server_firewall_rule[each.key].start_ip_address
   end_ip_address      = local.mysql_flexible_server_firewall_rule[each.key].end_ip_address
 }
+
+resource "azurerm_mysql_flexible_server_active_directory_administrator" "mysql_flexible_server_active_directory_administrator" {
+  for_each = var.mysql_flexible_server_active_directory_administrator
+
+  server_id   = var.mysql_flexible_server_active_directory_administrator[each.key].server_id
+  identity_id = var.mysql_flexible_server_active_directory_administrator[each.key].identity_id
+  login       = var.mysql_flexible_server_active_directory_administrator[each.key].login
+  object_id   = var.mysql_flexible_server_active_directory_administrator[each.key].object_id
+  tenant_id   = var.mysql_flexible_server_active_directory_administrator[each.key].tenant_id
+}

@@ -19,6 +19,11 @@ variable "mysql_flexible_server_firewall_rule" {
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
 
+variable "mysql_flexible_server_active_directory_administrator" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
 
 locals {
   default = {
