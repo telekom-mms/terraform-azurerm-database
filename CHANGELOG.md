@@ -1,12 +1,24 @@
 # Changelog
 
-## [1.0.1](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.1) (2023-07-19)
+## [1.0.2](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.2) (2023-10-25)
 
-[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.0...1.0.1)
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.1...1.0.2)
 
 **Closed issues:**
 
 - Dependency Dashboard [\#4](https://github.com/telekom-mms/terraform-azurerm-database/issues/4)
+
+## [1.0.1](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.1) (2023-07-19)
+
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.0...1.0.1)
+
+**Fixed bugs:**
+
+- correct version constraint [\#6](https://github.com/telekom-mms/terraform-azurerm-database/pull/6) ([michaelamattes](https://github.com/michaelamattes))
+
+**Merged pull requests:**
+
+- correct full example, fix code style failures [\#5](https://github.com/telekom-mms/terraform-azurerm-database/pull/5) ([michaelamattes](https://github.com/michaelamattes))
 
 ## [1.0.0](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.0) (2023-07-13)
 
