@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.2](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.2) (2023-11-16)
+## [1.0.2](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.2) (2023-11-20)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.1...1.0.2)
 
