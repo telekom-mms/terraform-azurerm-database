@@ -42,6 +42,17 @@ output "mysql_flexible_server_firewall_rule" {
   }
 }
 
+output "mysql_flexible_server_active_directory_administrator" {
+  description = "Outputs all attributes of resource_type."
+  value = {
+    for mysql_flexible_server_active_directory_administrator in keys(azurerm_mysql_flexible_server_active_directory_administrator.mysql_flexible_server_active_directory_administrator) :
+    mysql_flexible_server_active_directory_administrator => {
+      for key, value in azurerm_mysql_flexible_server_active_directory_administrator.mysql_flexible_server_active_directory_administrator[mysql_flexible_server_active_directory_administrator] :
+      key => value
+    }
+  }
+}
+
 output "variables" {
   description = "Displays all configurable variables passed by the module. __default__ = predefined values per module. __merged__ = result of merging the default values and custom values passed to the module"
   value = {
