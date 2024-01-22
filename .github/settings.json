@@ -8,7 +8,12 @@
       "azure",
       "mysql-flexible-server",
       "mysql-flexible-database",
-      "mysql-flexible-server-firewall-rule"
+      "mysql-flexible-configuration",
+      "mysql-flexible-server-firewall-rule",
+      "postgresql-flexible-server",
+      "postgresql-flexible-server-database",
+      "postgresql-flexible-server-configuration",
+      "postgresql-flexible-server-firewall-rule"
     ]
   }
 }
