@@ -124,8 +124,8 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   replication_role                  = local.postgresql_flexible_server[each.key].replication_role
   sku_name                          = local.postgresql_flexible_server[each.key].sku_name
   source_server_id                  = local.postgresql_flexible_server[each.key].source_server_id
-  auto_grow_enabled                 = local.postgresql_flexible_server[each.key].auto_grow_enabled_id
-  storage_mb                        = local.postgresql_flexible_server[each.key].storage_mb_id
+  auto_grow_enabled                 = local.postgresql_flexible_server[each.key].auto_grow_enabled
+  storage_mb                        = local.postgresql_flexible_server[each.key].storage_mb
   version                           = local.postgresql_flexible_server[each.key].version
   zone                              = local.postgresql_flexible_server[each.key].zone
 
@@ -202,7 +202,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "postgresql_flexible
   for_each = var.postgresql_flexible_server_firewall_rule
 
   name             = local.postgresql_flexible_server_firewall_rule[each.key].name == "" ? each.key : local.postgresql_flexible_server_firewall_rule[each.key].name
-  server_id        = local.postgresql_flexible_server_firewall_rule[each.key].server_name
+  server_id        = local.postgresql_flexible_server_firewall_rule[each.key].server_id
   start_ip_address = local.postgresql_flexible_server_firewall_rule[each.key].start_ip_address
   end_ip_address   = local.postgresql_flexible_server_firewall_rule[each.key].end_ip_address
 }
