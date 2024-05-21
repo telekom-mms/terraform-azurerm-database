@@ -146,6 +146,14 @@ locals {
   }
 
   /**
+    compare and merge custom and default values
+  */
+  postgresql_flexible_server_values = {
+    for postgresql_flexible_server in keys(var.postgresql_flexible_server) :
+    postgresql_flexible_server => merge(local.default.postgresql_flexible_server, var.postgresql_flexible_server[postgresql_flexible_server])
+  }
+
+  /**
     deep merge of all custom and default values
   */
   mysql_flexible_server = {
@@ -176,14 +184,6 @@ locals {
   mysql_flexible_server_firewall_rule = {
     for mysql_flexible_server_firewall_rule in keys(var.mysql_flexible_server_firewall_rule) :
     mysql_flexible_server_firewall_rule => merge(local.default.mysql_flexible_server_firewall_rule, var.mysql_flexible_server_firewall_rule[mysql_flexible_server_firewall_rule])
-  }
-
-  /**
-    compare and merge custom and default values
-  */
-  postgresql_flexible_server_values = {
-    for postgresql_flexible_server in keys(var.postgresql_flexible_server) :
-    postgresql_flexible_server => merge(local.default.postgresql_flexible_server, var.postgresql_flexible_server[postgresql_flexible_server])
   }
 
   /**
