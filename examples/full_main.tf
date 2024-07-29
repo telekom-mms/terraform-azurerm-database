@@ -1,5 +1,5 @@
 resource "random_password" "password" {
-  for_each = toset(["mysql_root"])
+  for_each = toset(["mysql_root", "postgresql_root"])
 
   length  = 16
   special = false
@@ -49,6 +49,46 @@ module "database" {
       resource_group_name = module.database.mysql_flexible_server["mysql-mms"].resource_group_name
       start_ip_address    = cidrhost("0.0.0.0/32", 0)
       end_ip_address      = cidrhost("0.0.0.0/32", -1)
+    }
+  }
+
+  postgresql_flexible_server = {
+    postgresql-mms = {
+      location               = "westeurope"
+      resource_group_name    = "rg-mms-github"
+      administrator_login    = "postgresql_root"
+      administrator_password = random_password.password["postgresql_root"].result
+      sku_name               = "GP_Standard_D2ds_v5"
+      storage_mb             = 32768
+      version                = "16"
+      zone                   = "1"
+      high_availability = {
+        mode                      = "ZoneRedundant"
+        standby_availability_zone = 2
+      }
+      tags = {
+        project     = "mms-github"
+        environment = terraform.workspace
+        managed-by  = "terraform"
+      }
+    }
+  }
+  postgresql_flexible_server_configuration = {
+    backslash_quote = {
+      server_id = module.database.postgresql_flexible_server["postgresql-mms"].id
+      value     = "on"
+    }
+  }
+  postgresql_flexible_server_database = {
+    application = {
+      server_id = module.database.postgresql_flexible_server["postgresql-mms"].id
+    }
+  }
+  postgresql_flexible_server_firewall_rule = {
+    AzureServices = {
+      server_id        = module.database.postgresql_flexible_server["postgresql-mms"].id
+      start_ip_address = cidrhost("0.0.0.0/32", 0)
+      end_ip_address   = cidrhost("0.0.0.0/32", -1)
     }
   }
 }
