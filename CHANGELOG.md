@@ -7,6 +7,7 @@
 **Merged pull requests:**
 
 - Pin version of azurerm to compatible state   [\#14](https://github.com/telekom-mms/terraform-azurerm-database/pull/14) ([michaelamattes](https://github.com/michaelamattes))
+- add missing providers block [\#11](https://github.com/telekom-mms/terraform-azurerm-database/pull/11) ([matthiss](https://github.com/matthiss))
 - add postgresql to database module [\#10](https://github.com/telekom-mms/terraform-azurerm-database/pull/10) ([hektor1966](https://github.com/hektor1966))
 - run terrascan in test setting directory [\#7](https://github.com/telekom-mms/terraform-azurerm-database/pull/7) ([michaelamattes](https://github.com/michaelamattes))
 
