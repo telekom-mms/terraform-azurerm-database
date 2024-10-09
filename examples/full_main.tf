@@ -17,7 +17,8 @@ module "database" {
       version                = "8.0.21"
       zone                   = "1"
       storage = {
-        size_gb = 20
+        io_scaling_enabled = true
+        size_gb            = 20
       }
       high_availability = {
         mode                      = "ZoneRedundant"

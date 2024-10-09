@@ -69,9 +69,10 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
     for_each = length(compact(values(local.mysql_flexible_server[each.key].storage))) > 0 ? [0] : []
 
     content {
-      auto_grow_enabled = local.mysql_flexible_server[each.key].storage.auto_grow_enabled
-      iops              = local.mysql_flexible_server[each.key].storage.iops
-      size_gb           = local.mysql_flexible_server[each.key].storage.size_gb
+      auto_grow_enabled  = local.mysql_flexible_server[each.key].storage.auto_grow_enabled
+      io_scaling_enabled = local.mysql_flexible_server[each.key].storage.io_scaling_enabled
+      iops               = local.mysql_flexible_server[each.key].storage.iops
+      size_gb            = local.mysql_flexible_server[each.key].storage.size_gb
     }
   }
 

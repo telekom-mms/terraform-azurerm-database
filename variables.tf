@@ -76,9 +76,10 @@ locals {
         start_minute = null
       }
       storage = {
-        auto_grow_enabled = null
-        iops              = null
-        size_gb           = null
+        auto_grow_enabled  = null
+        io_scaling_enabled = null
+        iops               = null
+        size_gb            = null
       }
       tags = {}
     }
