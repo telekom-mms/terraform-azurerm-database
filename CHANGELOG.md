@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.3) (2024-10-09)
+
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.2...1.0.3)
+
+**Implemented enhancements:**
+
+- add argument for i/o autoscaling in MySQL flex server [\#16](https://github.com/telekom-mms/terraform-azurerm-database/pull/16) ([habr-mms](https://github.com/habr-mms))
+
 ## [1.0.2](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.2) (2024-08-28)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.1...1.0.2)
