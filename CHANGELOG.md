@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.4) (2025-08-28)
+
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.3...1.0.4)
+
+**Fixed bugs:**
+
+- fix terrascan workflow run [\#18](https://github.com/telekom-mms/terraform-azurerm-database/pull/18) ([michaelamattes](https://github.com/michaelamattes))
+
 ## [1.0.3](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.3) (2024-10-09)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.2...1.0.3)
