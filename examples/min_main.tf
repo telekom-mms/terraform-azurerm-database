@@ -1,5 +1,5 @@
 resource "random_password" "password" {
-  for_each = toset(["mysql_root", "postgresql_root"])
+  for_each = toset(["mysql_root", "postgresql_root", "mssql_admin"])
 
   length  = 16
   special = false
@@ -64,4 +64,26 @@ module "database" {
       end_ip_address   = cidrhost("0.0.0.0/32", -1)
     }
   }
+  mssql_server = {
+    sql-mms = {
+      resource_group_name          = "rg-mms-github"
+      location                     = "westeurope"
+      administrator_login          = "mssql_admin"
+      administrator_login_password = random_password.password["mssql_admin"].result
+      version                      = "12.0"
+    }
+  }
+  mssql_database = {
+    sqldb-mms = {
+      server_id = module.database.mssql_server["sql-mms"].id
+    }
+  }
+  mssql_firewall_rule = {
+    AzureServices = {
+      server_id        = module.database.mssql_server["sql-mms"].id
+      start_ip_address = cidrhost("0.0.0.0/32", 0)
+      end_ip_address   = cidrhost("0.0.0.0/32", -1)
+    }
+  }
 }
+

@@ -1,3 +1,27 @@
+variable "mssql_server" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
+
+variable "mssql_database" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
+
+variable "mssql_virtual_network_rule" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
+
+variable "mssql_firewall_rule" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
+
 variable "mysql_flexible_server" {
   type        = any
   default     = {}
@@ -45,6 +69,88 @@ variable "postgresql_flexible_server_firewall_rule" {
 
 locals {
   default = {
+    // MSSQL resources
+    mssql_server = {
+      name                                 = ""
+      version                              = "12.0"
+      administrator_login                  = null
+      administrator_login_password         = null
+      connection_policy                    = null 
+      minimum_tls_version                  = null
+      public_network_access_enabled        = null 
+      outbound_network_restriction_enabled = null
+      primary_user_assigned_identity_id    = null
+      azuread_administrator                = {}
+      identity = {
+        type         = ""
+        identity_ids = null
+      }
+      azuread_administrator = {
+        login_username              = ""
+        object_id                   = ""
+        tenant_id                   = null
+        azuread_authentication_only = null
+      }
+      tags = {}
+      sql_authentication_disabled = false
+    }
+    mssql_database = {
+      name                                = ""
+      auto_pause_delay_in_minutes         = null
+      create_mode                         = null
+      creation_source_database_id         = null
+      collation                           = null
+      elastic_pool_id                     = null
+      geo_backup_enabled                  = null 
+      ledger_enabled                      = null
+      license_type                        = null
+      max_size_gb                         = null
+      min_capacity                        = null
+      restore_point_in_time               = null
+      recover_database_id                 = null
+      restore_dropped_database_id         = null
+      read_replica_count                  = null
+      read_scale                          = null
+      sample_name                         = null
+      sku_name                            = null
+      storage_account_type                = null
+      transparent_data_encryption_enabled = null 
+      zone_redundant                      = null
+      long_term_retention_policy = {
+        weekly_retention  = null
+        monthly_retention = null
+        yearly_retention  = null
+        week_of_year      = null
+      }
+      short_term_retention_policy = {
+        retention_days           = null
+        backup_interval_in_hours = null
+      }
+      threat_detection_policy = {
+        state                      = ""
+        disabled_alerts            = null
+        email_account_admins       = null
+        email_addresses            = null
+        retention_days             = null
+        storage_account_access_key = null
+        storage_endpoint           = null
+      }
+      tags = {}
+    }
+    mssql_virtual_network_rule = {
+      name                                 = ""
+      server_id                            = ""
+      subnet_id                            = ""
+      ignore_missing_vnet_service_endpoint = false
+    }
+    mssql_firewall_rule = {
+      name             = ""
+      server_id        = ""
+      start_ip_address = ""
+      end_ip_address   = ""
+    }
+
+    // MySQL resources
     mysql_flexible_server = {
       name                              = ""
       administrator_login               = null
@@ -83,7 +189,6 @@ locals {
       }
       tags = {}
     }
-
     mysql_flexible_server_configuration = {
       name = ""
     }
@@ -96,6 +201,7 @@ locals {
       name = ""
     }
 
+    // PostgreSQL resources
     postgresql_flexible_server = {
       name                              = ""
       administrator_login               = null
@@ -122,41 +228,77 @@ locals {
       maintenance_window = {}
       tags               = {}
     }
-
     postgresql_flexible_server_configuration = {
       name = ""
     }
-
     postgresql_flexible_server_database = {
       name      = ""
       charset   = "UTF8"
       collation = "de-DE"
     }
-
     postgresql_flexible_server_firewall_rule = {
       name = ""
     }
   }
 
-  /**
-    compare and merge custom and default values
-  */
+  // compare and merge custom and default values
+  mssql_server_values = {
+    for mssql_server in keys(var.mssql_server) :
+    mssql_server => merge(local.default.mssql_server, var.mssql_server[mssql_server])
+  }
+  mssql_database_values = {
+    for mssql_database in keys(var.mssql_database) :
+    mssql_database => merge(local.default.mssql_database, var.mssql_database[mssql_database])
+  }
+  mssql_virtual_network_rule_values = {
+    for rule in keys(var.mssql_virtual_network_rule) :
+    rule => merge(local.default.mssql_virtual_network_rule, var.mssql_virtual_network_rule[rule])
+  }
+  mssql_firewall_rule_values = {
+    for rule in keys(var.mssql_firewall_rule) :
+    rule => merge(local.default.mssql_firewall_rule, var.mssql_firewall_rule[rule])
+  }
+
   mysql_flexible_server_values = {
     for mysql_flexible_server in keys(var.mysql_flexible_server) :
     mysql_flexible_server => merge(local.default.mysql_flexible_server, var.mysql_flexible_server[mysql_flexible_server])
   }
 
-  /**
-    compare and merge custom and default values
-  */
   postgresql_flexible_server_values = {
     for postgresql_flexible_server in keys(var.postgresql_flexible_server) :
     postgresql_flexible_server => merge(local.default.postgresql_flexible_server, var.postgresql_flexible_server[postgresql_flexible_server])
   }
 
-  /**
-    deep merge of all custom and default values
-  */
+  // deep merge of all custom and default values
+  mssql_server = {
+    for mssql_server in keys(var.mssql_server) :
+    mssql_server => merge(
+      local.mssql_server_values[mssql_server],
+      {
+        for config in ["identity", "azuread_administrator"] :
+        config => merge(local.default.mssql_server[config], local.mssql_server_values[mssql_server][config])
+      }
+    )
+  }
+  mssql_database = {
+    for mssql_database in keys(var.mssql_database) :
+    mssql_database => merge(
+      local.mssql_database_values[mssql_database],
+      {
+        for config in ["threat_detection_policy", "long_term_retention_policy", "short_term_retention_policy"] :
+        config => merge(local.default.mssql_database[config], local.mssql_database_values[mssql_database][config])
+      }
+    )
+  }
+  mssql_virtual_network_rule = {
+    for rule in keys(var.mssql_virtual_network_rule) :
+    rule => local.mssql_virtual_network_rule_values[rule]
+  }
+  mssql_firewall_rule = {
+    for rule in keys(var.mssql_firewall_rule) :
+    rule => local.mssql_firewall_rule_values[rule]
+  }
+
   mysql_flexible_server = {
     for mysql_flexible_server in keys(var.mysql_flexible_server) :
     mysql_flexible_server => merge(
@@ -187,9 +329,6 @@ locals {
     mysql_flexible_server_firewall_rule => merge(local.default.mysql_flexible_server_firewall_rule, var.mysql_flexible_server_firewall_rule[mysql_flexible_server_firewall_rule])
   }
 
-  /**
-    deep merge of all custom and default values
-  */
   postgresql_flexible_server = {
     for postgresql_flexible_server in keys(var.postgresql_flexible_server) :
     postgresql_flexible_server => merge(
