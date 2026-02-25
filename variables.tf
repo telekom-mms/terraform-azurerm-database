@@ -75,9 +75,9 @@ locals {
       version                              = "12.0"
       administrator_login                  = null
       administrator_login_password         = null
-      connection_policy                    = null 
+      connection_policy                    = null
       minimum_tls_version                  = null
-      public_network_access_enabled        = null 
+      public_network_access_enabled        = null
       outbound_network_restriction_enabled = null
       primary_user_assigned_identity_id    = null
       azuread_administrator                = {}
@@ -91,7 +91,7 @@ locals {
         tenant_id                   = null
         azuread_authentication_only = null
       }
-      tags = {}
+      tags                        = {}
       sql_authentication_disabled = false
     }
     mssql_database = {
@@ -101,7 +101,7 @@ locals {
       creation_source_database_id         = null
       collation                           = null
       elastic_pool_id                     = null
-      geo_backup_enabled                  = null 
+      geo_backup_enabled                  = null
       ledger_enabled                      = null
       license_type                        = null
       max_size_gb                         = null
@@ -114,7 +114,7 @@ locals {
       sample_name                         = null
       sku_name                            = null
       storage_account_type                = null
-      transparent_data_encryption_enabled = null 
+      transparent_data_encryption_enabled = null
       zone_redundant                      = null
       long_term_retention_policy = {
         weekly_retention  = null
