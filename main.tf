@@ -287,12 +287,12 @@ resource "azurerm_mssql_database" "mssql_database" {
   }
 
   dynamic "long_term_retention_policy" {
-    for_each = compact([
+    for_each = length(compact([
       local.mssql_database[each.key].long_term_retention_policy.weekly_retention,
       local.mssql_database[each.key].long_term_retention_policy.monthly_retention,
       local.mssql_database[each.key].long_term_retention_policy.yearly_retention,
       local.mssql_database[each.key].long_term_retention_policy.week_of_year
-    ]) != [] ? [1] : []
+    ])) > 0 ? [1] : []
 
     content {
       weekly_retention  = local.mssql_database[each.key].long_term_retention_policy.weekly_retention
