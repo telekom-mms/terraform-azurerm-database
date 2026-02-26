@@ -80,7 +80,6 @@ locals {
       public_network_access_enabled        = null
       outbound_network_restriction_enabled = null
       primary_user_assigned_identity_id    = null
-      azuread_administrator                = {}
       identity = {
         type         = ""
         identity_ids = null

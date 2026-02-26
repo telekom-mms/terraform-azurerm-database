@@ -5,20 +5,19 @@
     "default_branch": "main",
     "topics": [
       "azure",
-      "mssql-database",
-      "mssql-firewall-rule",
-      "mssql-server",
-      "mssql-virtual-network-rule",
-      "mysql-flexible-configuration",
-      "mysql-flexible-database",
+      "terraform",
       "mysql-flexible-server",
       "mysql-flexible-server-configuration",
+      "mysql-flexible-database",
       "mysql-flexible-server-firewall-rule",
       "postgresql-flexible-server",
       "postgresql-flexible-server-configuration",
       "postgresql-flexible-server-database",
       "postgresql-flexible-server-firewall-rule",
-      "terraform"
+      "mssql-server",
+      "mssql-database",
+      "mssql-virtual-network-rule",
+      "mssql-firewall-rule"
     ]
   }
 }
