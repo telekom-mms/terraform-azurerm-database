@@ -42,6 +42,17 @@ output "mysql_flexible_server_firewall_rule" {
   }
 }
 
+output "mysql_flexible_server_active_directory_administrator" {
+  description = "Outputs all attributes of resource_type."
+  value = {
+    for mysql_flexible_server_active_directory_administrator in keys(azurerm_mysql_flexible_server_active_directory_administrator.mysql_flexible_server_active_directory_administrator) :
+    mysql_flexible_server_active_directory_administrator => {
+      for key, value in azurerm_mysql_flexible_server_active_directory_administrator.mysql_flexible_server_active_directory_administrator[mysql_flexible_server_active_directory_administrator] :
+      key => value
+    }
+  }
+}
+
 output "postgresql_flexible_server" {
   description = "Outputs all attributes of resource_type."
   value = {
@@ -169,6 +180,10 @@ output "variables" {
       mysql_flexible_server_firewall_rule = {
         for key in keys(var.mysql_flexible_server_firewall_rule) :
         key => local.mysql_flexible_server_firewall_rule[key]
+      }
+      mysql_flexible_server_active_directory_administrator = {
+        for key in keys(var.mysql_flexible_server_active_directory_administrator) :
+        key => local.mysql_flexible_server_active_directory_administrator[key]
       }
       postgresql_flexible_server = {
         for key in keys(var.postgresql_flexible_server) :

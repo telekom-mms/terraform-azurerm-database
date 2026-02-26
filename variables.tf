@@ -42,12 +42,18 @@ variable "mysql_flexible_server_firewall_rule" {
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
+variable "mysql_flexible_server_active_directory_administrator" {
+  type        = any
+  default     = {}
+  description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
+}
 
 variable "postgresql_flexible_server" {
   type        = any
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
+
 
 variable "postgresql_flexible_server_configuration" {
   type        = any
@@ -65,7 +71,6 @@ variable "postgresql_flexible_server_firewall_rule" {
   default     = {}
   description = "Resource definition, default settings are defined within locals and merged with var settings. For more information look at [Outputs](#Outputs)."
 }
-
 
 locals {
   default = {
@@ -199,6 +204,7 @@ locals {
     mysql_flexible_server_firewall_rule = {
       name = ""
     }
+    mysql_flexible_server_active_directory_administrator = {}
 
     // PostgreSQL resources
     postgresql_flexible_server = {
@@ -326,6 +332,10 @@ locals {
   mysql_flexible_server_firewall_rule = {
     for mysql_flexible_server_firewall_rule in keys(var.mysql_flexible_server_firewall_rule) :
     mysql_flexible_server_firewall_rule => merge(local.default.mysql_flexible_server_firewall_rule, var.mysql_flexible_server_firewall_rule[mysql_flexible_server_firewall_rule])
+  }
+  mysql_flexible_server_active_directory_administrator = {
+    for mysql_flexible_server_active_directory_administrator in keys(var.mysql_flexible_server_active_directory_administrator) :
+    mysql_flexible_server_active_directory_administrator => merge(local.default.mysql_flexible_server_active_directory_administrator, var.mysql_flexible_server_active_directory_administrator[mysql_flexible_server_active_directory_administrator])
   }
 
   postgresql_flexible_server = {
