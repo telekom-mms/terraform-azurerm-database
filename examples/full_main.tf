@@ -1,5 +1,5 @@
 resource "random_password" "password" {
-  for_each = toset(["mysql_root", "postgresql_root"])
+  for_each = toset(["mysql_root", "postgresql_root", "mssql_admin"])
 
   length  = 16
   special = false
@@ -88,6 +88,90 @@ module "database" {
   postgresql_flexible_server_firewall_rule = {
     AzureServices = {
       server_id        = module.database.postgresql_flexible_server["postgresql-mms"].id
+      start_ip_address = cidrhost("0.0.0.0/32", 0)
+      end_ip_address   = cidrhost("0.0.0.0/32", -1)
+    }
+  }
+
+  mssql_server = {
+    sql-mms = {
+      name                                 = "sql-mms"
+      resource_group_name                  = "rg-mms-github"
+      location                             = "westeurope"
+      version                              = "12.0"
+      administrator_login                  = "mssql_admin"
+      administrator_login_password         = random_password.password["mssql_admin"].result
+      connection_policy                    = "Redirect"
+      minimum_tls_version                  = "1.2"
+      public_network_access_enabled        = false
+      outbound_network_restriction_enabled = false
+      identity = {
+        type = "SystemAssigned"
+      }
+      tags = {
+        project     = "mms-github"
+        environment = terraform.workspace
+        managed-by  = "terraform"
+      }
+    }
+  }
+
+  mssql_database = {
+    sqldb-mms = {
+      name                                = "sqldb-mms"
+      server_id                           = module.database.mssql_server["sql-mms"].id
+      auto_pause_delay_in_minutes         = 60
+      create_mode                         = "Default"
+      collation                           = "SQL_Latin1_General_CP1_CI_AS"
+      geo_backup_enabled                  = true
+      ledger_enabled                      = false
+      license_type                        = "LicenseIncluded"
+      max_size_gb                         = 4
+      min_capacity                        = 0.5
+      read_scale                          = false
+      sku_name                            = "S0"
+      storage_account_type                = "Local"
+      transparent_data_encryption_enabled = true
+      zone_redundant                      = false
+      short_term_retention_policy = {
+        retention_days           = 7
+        backup_interval_in_hours = 24
+      }
+      long_term_retention_policy = {
+        weekly_retention  = "P1W"
+        monthly_retention = "P1M"
+        yearly_retention  = "P1Y"
+        week_of_year      = 1
+      }
+      threat_detection_policy = {
+        state                      = "Enabled"
+        disabled_alerts            = []
+        email_account_admins       = "Enabled"
+        email_addresses            = ["test@example.com"]
+        retention_days             = 7
+        storage_account_access_key = "key"
+        storage_endpoint           = "https://example.blob.core.windows.net/"
+      }
+      tags = {
+        project     = "mms-github"
+        environment = terraform.workspace
+        managed-by  = "terraform"
+      }
+    }
+  }
+
+  mssql_virtual_network_rule = {
+    sqlvnet-mms = {
+      name                                 = "sqlvnet-mms"
+      server_id                            = module.database.mssql_server["sql-mms"].id
+      subnet_id                            = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-mms-github/providers/Microsoft.Network/virtualNetworks/vnet-mms/subnets/subnet-mms"
+      ignore_missing_vnet_service_endpoint = true
+    }
+  }
+
+  mssql_firewall_rule = {
+    AzureServices = {
+      server_id        = module.database.mssql_server["sql-mms"].id
       start_ip_address = cidrhost("0.0.0.0/32", 0)
       end_ip_address   = cidrhost("0.0.0.0/32", -1)
     }
