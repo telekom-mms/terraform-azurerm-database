@@ -8,6 +8,10 @@
 
 - refactor and upgrade mssql [\#20](https://github.com/telekom-mms/terraform-azurerm-database/pull/20) ([mikaEz](https://github.com/mikaEz))
 
+**Merged pull requests:**
+
+- Update config [\#21](https://github.com/telekom-mms/terraform-azurerm-database/pull/21) ([mikaEz](https://github.com/mikaEz))
+
 ## [2.0.0](https://github.com/telekom-mms/terraform-azurerm-database/tree/2.0.0) (2025-12-19)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.3...2.0.0)
