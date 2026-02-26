@@ -1,12 +1,20 @@
 # Changelog
 
+## [2.0.1](https://github.com/telekom-mms/terraform-azurerm-database/tree/2.0.1) (2026-02-26)
+
+[Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/2.0.0...2.0.1)
+
+**Implemented enhancements:**
+
+- refactor and upgrade mssql [\#20](https://github.com/telekom-mms/terraform-azurerm-database/pull/20) ([mikaEz](https://github.com/mikaEz))
+
 ## [2.0.0](https://github.com/telekom-mms/terraform-azurerm-database/tree/2.0.0) (2025-12-19)
 
 [Full Changelog](https://github.com/telekom-mms/terraform-azurerm-database/compare/1.0.3...2.0.0)
 
 **Fixed bugs:**
 
-- fix terrascan workflow run [\#18](https://github.com/telekom-mms/terraform-azurerm-database/pull/18) ([michaelamattes](https://github.com/michaelamattes))
+- fix terrascan workflow run [\#18](https://github.com/telekom-mms/terraform-azurerm-database/pull/18) ([mikaEz](https://github.com/mikaEz))
 
 **Merged pull requests:**
 
@@ -26,10 +34,10 @@
 
 **Merged pull requests:**
 
-- Pin version of azurerm to compatible state   [\#14](https://github.com/telekom-mms/terraform-azurerm-database/pull/14) ([michaelamattes](https://github.com/michaelamattes))
+- Pin version of azurerm to compatible state   [\#14](https://github.com/telekom-mms/terraform-azurerm-database/pull/14) ([mikaEz](https://github.com/mikaEz))
 - add missing providers block [\#11](https://github.com/telekom-mms/terraform-azurerm-database/pull/11) ([matthiss](https://github.com/matthiss))
 - add postgresql to database module [\#10](https://github.com/telekom-mms/terraform-azurerm-database/pull/10) ([hektor1966](https://github.com/hektor1966))
-- run terrascan in test setting directory [\#7](https://github.com/telekom-mms/terraform-azurerm-database/pull/7) ([michaelamattes](https://github.com/michaelamattes))
+- run terrascan in test setting directory [\#7](https://github.com/telekom-mms/terraform-azurerm-database/pull/7) ([mikaEz](https://github.com/mikaEz))
 
 ## [1.0.1](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.1) (2023-07-19)
 
@@ -37,11 +45,11 @@
 
 **Fixed bugs:**
 
-- correct version constraint [\#6](https://github.com/telekom-mms/terraform-azurerm-database/pull/6) ([michaelamattes](https://github.com/michaelamattes))
+- correct version constraint [\#6](https://github.com/telekom-mms/terraform-azurerm-database/pull/6) ([mikaEz](https://github.com/mikaEz))
 
 **Merged pull requests:**
 
-- correct full example, fix code style failures [\#5](https://github.com/telekom-mms/terraform-azurerm-database/pull/5) ([michaelamattes](https://github.com/michaelamattes))
+- correct full example, fix code style failures [\#5](https://github.com/telekom-mms/terraform-azurerm-database/pull/5) ([mikaEz](https://github.com/mikaEz))
 
 ## [1.0.0](https://github.com/telekom-mms/terraform-azurerm-database/tree/1.0.0) (2023-07-13)
 
@@ -49,7 +57,7 @@
 
 **Merged pull requests:**
 
-- Refactoring module, compare to template structure, add more examples [\#1](https://github.com/telekom-mms/terraform-azurerm-database/pull/1) ([michaelamattes](https://github.com/michaelamattes))
+- Refactoring module, compare to template structure, add more examples [\#1](https://github.com/telekom-mms/terraform-azurerm-database/pull/1) ([mikaEz](https://github.com/mikaEz))
 
 
 
