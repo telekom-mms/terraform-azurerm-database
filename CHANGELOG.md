@@ -7,6 +7,7 @@
 **Implemented enhancements:**
 
 - refactor and upgrade mssql [\#20](https://github.com/telekom-mms/terraform-azurerm-database/pull/20) ([mikaEz](https://github.com/mikaEz))
+- New resource for Entra ID administrator [\#9](https://github.com/telekom-mms/terraform-azurerm-database/pull/9) ([habr-mms](https://github.com/habr-mms))
 
 **Merged pull requests:**
 
