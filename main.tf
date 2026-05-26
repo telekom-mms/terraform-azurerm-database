@@ -14,12 +14,15 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   location                          = local.mysql_flexible_server[each.key].location
   administrator_login               = local.mysql_flexible_server[each.key].administrator_login
   administrator_password            = local.mysql_flexible_server[each.key].administrator_password
+  administrator_password_wo         = local.mysql_flexible_server[each.key].administrator_password_wo
+  administrator_password_wo_version = local.mysql_flexible_server[each.key].administrator_password_wo_version
   backup_retention_days             = local.mysql_flexible_server[each.key].backup_retention_days
   create_mode                       = local.mysql_flexible_server[each.key].create_mode
   delegated_subnet_id               = local.mysql_flexible_server[each.key].delegated_subnet_id
   geo_redundant_backup_enabled      = local.mysql_flexible_server[each.key].geo_redundant_backup_enabled
   point_in_time_restore_time_in_utc = local.mysql_flexible_server[each.key].point_in_time_restore_time_in_utc
   private_dns_zone_id               = local.mysql_flexible_server[each.key].private_dns_zone_id
+  public_network_access             = local.mysql_flexible_server[each.key].public_network_access
   replication_role                  = local.mysql_flexible_server[each.key].replication_role
   sku_name                          = local.mysql_flexible_server[each.key].sku_name
   source_server_id                  = local.mysql_flexible_server[each.key].source_server_id
@@ -27,18 +30,19 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   zone                              = local.mysql_flexible_server[each.key].zone
 
   dynamic "customer_managed_key" {
-    for_each = length(compact(values(local.mysql_flexible_server[each.key].customer_managed_key))) > 0 ? [0] : []
+    for_each = try(length([for v in values(local.mysql_flexible_server[each.key].customer_managed_key) : v if v != null]) > 0, false) ? [0] : []
 
     content {
       key_vault_key_id                     = local.mysql_flexible_server[each.key].customer_managed_key.key_vault_key_id
       primary_user_assigned_identity_id    = local.mysql_flexible_server[each.key].customer_managed_key.primary_user_assigned_identity_id
       geo_backup_key_vault_key_id          = local.mysql_flexible_server[each.key].customer_managed_key.geo_backup_key_vault_key_id
       geo_backup_user_assigned_identity_id = local.mysql_flexible_server[each.key].customer_managed_key.geo_backup_user_assigned_identity_id
+      managed_hsm_key_id                   = local.mysql_flexible_server[each.key].customer_managed_key.managed_hsm_key_id
     }
   }
 
   dynamic "high_availability" {
-    for_each = length(compact(values(local.mysql_flexible_server[each.key].high_availability))) > 0 ? [0] : []
+    for_each = try(local.mysql_flexible_server[each.key].high_availability.mode != null, false) ? [0] : []
 
     content {
       mode                      = local.mysql_flexible_server[each.key].high_availability.mode
@@ -47,7 +51,11 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "identity" {
-    for_each = local.mysql_flexible_server[each.key].identity == {} ? [] : [0]
+    for_each = try(
+      local.mysql_flexible_server[each.key].identity.type != null &&
+      local.mysql_flexible_server[each.key].identity.type != "",
+      false
+    ) ? [0] : []
 
     content {
       type         = local.mysql_flexible_server[each.key].identity.type
@@ -56,7 +64,12 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "maintenance_window" {
-    for_each = length(compact(values(local.mysql_flexible_server[each.key].maintenance_window))) > 0 ? [0] : []
+    for_each = try(
+      local.mysql_flexible_server[each.key].maintenance_window.day_of_week != null &&
+      local.mysql_flexible_server[each.key].maintenance_window.start_hour != null &&
+      local.mysql_flexible_server[each.key].maintenance_window.start_minute != null,
+      false
+    ) ? [0] : []
 
     content {
       day_of_week  = local.mysql_flexible_server[each.key].maintenance_window.day_of_week
@@ -66,14 +79,24 @@ resource "azurerm_mysql_flexible_server" "mysql_flexible_server" {
   }
 
   dynamic "storage" {
-    for_each = length(compact(values(local.mysql_flexible_server[each.key].storage))) > 0 ? [0] : []
+    for_each = try(length([for v in values(local.mysql_flexible_server[each.key].storage) : v if v != null]) > 0, false) ? [0] : []
 
     content {
-      auto_grow_enabled  = local.mysql_flexible_server[each.key].storage.auto_grow_enabled
-      io_scaling_enabled = local.mysql_flexible_server[each.key].storage.io_scaling_enabled
-      iops               = local.mysql_flexible_server[each.key].storage.iops
-      size_gb            = local.mysql_flexible_server[each.key].storage.size_gb
+      auto_grow_enabled   = local.mysql_flexible_server[each.key].storage.auto_grow_enabled
+      io_scaling_enabled  = local.mysql_flexible_server[each.key].storage.io_scaling_enabled
+      iops                = local.mysql_flexible_server[each.key].storage.iops
+      log_on_disk_enabled = local.mysql_flexible_server[each.key].storage.log_on_disk_enabled
+      size_gb             = local.mysql_flexible_server[each.key].storage.size_gb
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      zone,
+      high_availability[0].standby_availability_zone,
+      storage[0].iops,
+      storage[0].size_gb,
+    ]
   }
 
   tags = local.mysql_flexible_server[each.key].tags
@@ -126,33 +149,45 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   location                          = local.postgresql_flexible_server[each.key].location
   administrator_login               = local.postgresql_flexible_server[each.key].administrator_login
   administrator_password            = local.postgresql_flexible_server[each.key].administrator_password
+  administrator_password_wo         = local.postgresql_flexible_server[each.key].administrator_password_wo
+  administrator_password_wo_version = local.postgresql_flexible_server[each.key].administrator_password_wo_version
   backup_retention_days             = local.postgresql_flexible_server[each.key].backup_retention_days
   create_mode                       = local.postgresql_flexible_server[each.key].create_mode
   delegated_subnet_id               = local.postgresql_flexible_server[each.key].delegated_subnet_id
   geo_redundant_backup_enabled      = local.postgresql_flexible_server[each.key].geo_redundant_backup_enabled
   point_in_time_restore_time_in_utc = local.postgresql_flexible_server[each.key].point_in_time_restore_time_in_utc
   private_dns_zone_id               = local.postgresql_flexible_server[each.key].private_dns_zone_id
+  public_network_access_enabled     = local.postgresql_flexible_server[each.key].public_network_access_enabled
   replication_role                  = local.postgresql_flexible_server[each.key].replication_role
   sku_name                          = local.postgresql_flexible_server[each.key].sku_name
   source_server_id                  = local.postgresql_flexible_server[each.key].source_server_id
   auto_grow_enabled                 = local.postgresql_flexible_server[each.key].auto_grow_enabled
   storage_mb                        = local.postgresql_flexible_server[each.key].storage_mb
+  storage_tier                      = local.postgresql_flexible_server[each.key].storage_tier
   version                           = local.postgresql_flexible_server[each.key].version
   zone                              = local.postgresql_flexible_server[each.key].zone
 
-
   dynamic "authentication" {
-    for_each = length(compact(values(local.postgresql_flexible_server[each.key].authentication))) > 0 ? [0] : []
+    for_each = try(length([for v in values(local.postgresql_flexible_server[each.key].authentication) : v if v != null]) > 0, false) ? [0] : []
 
     content {
-      active_directory_auth_enabled = local.postgresql_flexible_server[each.key].authentication_key.active_directory_auth_enabled
-      password_auth_enabled         = local.postgresql_flexible_server[each.key].authentication_key.password_auth_enabled
-      tenant_id                     = local.postgresql_flexible_server[each.key].authentication_key.tenant_id
+      active_directory_auth_enabled = local.postgresql_flexible_server[each.key].authentication.active_directory_auth_enabled
+      password_auth_enabled         = local.postgresql_flexible_server[each.key].authentication.password_auth_enabled
+      tenant_id                     = local.postgresql_flexible_server[each.key].authentication.tenant_id
+    }
+  }
+
+  dynamic "cluster" {
+    for_each = try(length([for v in values(local.postgresql_flexible_server[each.key].cluster) : v if v != null]) > 0, false) ? [0] : []
+
+    content {
+      size                  = local.postgresql_flexible_server[each.key].cluster.size
+      default_database_name = local.postgresql_flexible_server[each.key].cluster.default_database_name
     }
   }
 
   dynamic "customer_managed_key" {
-    for_each = length(compact(values(local.postgresql_flexible_server[each.key].customer_managed_key))) > 0 ? [0] : []
+    for_each = try(length([for v in values(local.postgresql_flexible_server[each.key].customer_managed_key) : v if v != null]) > 0, false) ? [0] : []
 
     content {
       key_vault_key_id                     = local.postgresql_flexible_server[each.key].customer_managed_key.key_vault_key_id
@@ -163,7 +198,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   }
 
   dynamic "high_availability" {
-    for_each = length(compact(values(local.postgresql_flexible_server[each.key].high_availability))) > 0 ? [0] : []
+    for_each = try(local.postgresql_flexible_server[each.key].high_availability.mode != null, false) ? [0] : []
 
     content {
       mode                      = local.postgresql_flexible_server[each.key].high_availability.mode
@@ -172,7 +207,11 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   }
 
   dynamic "identity" {
-    for_each = local.postgresql_flexible_server[each.key].identity == {} ? [] : [0]
+    for_each = try(
+      local.postgresql_flexible_server[each.key].identity.type != null &&
+      local.postgresql_flexible_server[each.key].identity.type != "",
+      false
+    ) ? [0] : []
 
     content {
       type         = local.postgresql_flexible_server[each.key].identity.type
@@ -181,7 +220,12 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   }
 
   dynamic "maintenance_window" {
-    for_each = length(compact(values(local.postgresql_flexible_server[each.key].maintenance_window))) > 0 ? [0] : []
+    for_each = try(
+      local.postgresql_flexible_server[each.key].maintenance_window.day_of_week != null &&
+      local.postgresql_flexible_server[each.key].maintenance_window.start_hour != null &&
+      local.postgresql_flexible_server[each.key].maintenance_window.start_minute != null,
+      false
+    ) ? [0] : []
 
     content {
       day_of_week  = local.postgresql_flexible_server[each.key].maintenance_window.day_of_week
@@ -189,6 +233,16 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
       start_minute = local.postgresql_flexible_server[each.key].maintenance_window.start_minute
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      storage_mb,
+      storage_tier,
+      zone,
+      high_availability[0].standby_availability_zone
+    ]
+  }
+
   tags = local.postgresql_flexible_server[each.key].tags
 }
 
@@ -221,20 +275,28 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "postgresql_flexible
 resource "azurerm_mssql_server" "mssql_server" {
   for_each = var.mssql_server
 
-  name                                 = local.mssql_server[each.key].name == "" ? each.key : local.mssql_server[each.key].name
-  resource_group_name                  = local.mssql_server[each.key].resource_group_name
-  location                             = local.mssql_server[each.key].location
-  version                              = local.mssql_server[each.key].version
-  administrator_login                  = local.mssql_server[each.key].administrator_login
-  administrator_login_password         = local.mssql_server[each.key].administrator_login_password
-  connection_policy                    = local.mssql_server[each.key].connection_policy
-  minimum_tls_version                  = local.mssql_server[each.key].minimum_tls_version
-  public_network_access_enabled        = local.mssql_server[each.key].public_network_access_enabled
-  outbound_network_restriction_enabled = local.mssql_server[each.key].outbound_network_restriction_enabled
-  primary_user_assigned_identity_id    = local.mssql_server[each.key].primary_user_assigned_identity_id
+  name                                         = local.mssql_server[each.key].name == "" ? each.key : local.mssql_server[each.key].name
+  resource_group_name                          = local.mssql_server[each.key].resource_group_name
+  location                                     = local.mssql_server[each.key].location
+  version                                      = local.mssql_server[each.key].version
+  administrator_login                          = local.mssql_server[each.key].administrator_login
+  administrator_login_password                 = local.mssql_server[each.key].administrator_login_password
+  administrator_login_password_wo              = local.mssql_server[each.key].administrator_login_password_wo
+  administrator_login_password_wo_version      = local.mssql_server[each.key].administrator_login_password_wo_version
+  connection_policy                            = local.mssql_server[each.key].connection_policy
+  express_vulnerability_assessment_enabled     = local.mssql_server[each.key].express_vulnerability_assessment_enabled
+  minimum_tls_version                          = local.mssql_server[each.key].minimum_tls_version
+  public_network_access_enabled                = local.mssql_server[each.key].public_network_access_enabled
+  outbound_network_restriction_enabled         = local.mssql_server[each.key].outbound_network_restriction_enabled
+  primary_user_assigned_identity_id            = local.mssql_server[each.key].primary_user_assigned_identity_id
+  transparent_data_encryption_key_vault_key_id = local.mssql_server[each.key].transparent_data_encryption_key_vault_key_id
 
   dynamic "identity" {
-    for_each = local.mssql_server[each.key].identity.type != "" ? [1] : []
+    for_each = try(
+      local.mssql_server[each.key].identity.type != null &&
+      local.mssql_server[each.key].identity.type != "",
+      false
+    ) ? [1] : []
 
     content {
       type         = local.mssql_server[each.key].identity.type
@@ -243,7 +305,7 @@ resource "azurerm_mssql_server" "mssql_server" {
   }
 
   dynamic "azuread_administrator" {
-    for_each = local.mssql_server[each.key].azuread_administrator.login_username != "" ? [1] : []
+    for_each = try(local.mssql_server[each.key].azuread_administrator.login_username != "", false) ? [1] : []
 
     content {
       login_username              = local.mssql_server[each.key].azuread_administrator.login_username
@@ -259,31 +321,65 @@ resource "azurerm_mssql_server" "mssql_server" {
 resource "azurerm_mssql_database" "mssql_database" {
   for_each = var.mssql_database
 
-  name                                = local.mssql_database[each.key].name == "" ? each.key : local.mssql_database[each.key].name
-  server_id                           = local.mssql_database[each.key].server_id
-  auto_pause_delay_in_minutes         = local.mssql_database[each.key].auto_pause_delay_in_minutes
-  create_mode                         = local.mssql_database[each.key].create_mode
-  creation_source_database_id         = local.mssql_database[each.key].creation_source_database_id
-  collation                           = local.mssql_database[each.key].collation
-  elastic_pool_id                     = local.mssql_database[each.key].elastic_pool_id
-  geo_backup_enabled                  = local.mssql_database[each.key].geo_backup_enabled
-  ledger_enabled                      = local.mssql_database[each.key].ledger_enabled
-  license_type                        = local.mssql_database[each.key].license_type
-  max_size_gb                         = local.mssql_database[each.key].max_size_gb
-  min_capacity                        = local.mssql_database[each.key].min_capacity
-  restore_point_in_time               = local.mssql_database[each.key].restore_point_in_time
-  recover_database_id                 = local.mssql_database[each.key].recover_database_id
-  restore_dropped_database_id         = local.mssql_database[each.key].restore_dropped_database_id
-  read_replica_count                  = local.mssql_database[each.key].read_replica_count
-  read_scale                          = local.mssql_database[each.key].read_scale
-  sample_name                         = local.mssql_database[each.key].sample_name
-  sku_name                            = local.mssql_database[each.key].sku_name
-  storage_account_type                = local.mssql_database[each.key].storage_account_type
-  transparent_data_encryption_enabled = local.mssql_database[each.key].transparent_data_encryption_enabled
-  zone_redundant                      = local.mssql_database[each.key].zone_redundant
+  name                                                       = local.mssql_database[each.key].name == "" ? each.key : local.mssql_database[each.key].name
+  server_id                                                  = local.mssql_database[each.key].server_id
+  auto_pause_delay_in_minutes                                = local.mssql_database[each.key].auto_pause_delay_in_minutes
+  create_mode                                                = local.mssql_database[each.key].create_mode
+  creation_source_database_id                                = local.mssql_database[each.key].creation_source_database_id
+  collation                                                  = local.mssql_database[each.key].collation
+  elastic_pool_id                                            = local.mssql_database[each.key].elastic_pool_id
+  enclave_type                                               = local.mssql_database[each.key].enclave_type
+  geo_backup_enabled                                         = local.mssql_database[each.key].geo_backup_enabled
+  maintenance_configuration_name                             = local.mssql_database[each.key].maintenance_configuration_name
+  ledger_enabled                                             = local.mssql_database[each.key].ledger_enabled
+  license_type                                               = local.mssql_database[each.key].license_type
+  max_size_gb                                                = local.mssql_database[each.key].max_size_gb
+  min_capacity                                               = local.mssql_database[each.key].min_capacity
+  restore_point_in_time                                      = local.mssql_database[each.key].restore_point_in_time
+  recover_database_id                                        = local.mssql_database[each.key].recover_database_id
+  recovery_point_id                                          = local.mssql_database[each.key].recovery_point_id
+  restore_dropped_database_id                                = local.mssql_database[each.key].restore_dropped_database_id
+  restore_long_term_retention_backup_id                      = local.mssql_database[each.key].restore_long_term_retention_backup_id
+  read_replica_count                                         = local.mssql_database[each.key].read_replica_count
+  read_scale                                                 = local.mssql_database[each.key].read_scale
+  sample_name                                                = local.mssql_database[each.key].sample_name
+  secondary_type                                             = local.mssql_database[each.key].secondary_type
+  sku_name                                                   = local.mssql_database[each.key].sku_name
+  storage_account_type                                       = local.mssql_database[each.key].storage_account_type
+  transparent_data_encryption_enabled                        = local.mssql_database[each.key].transparent_data_encryption_enabled
+  transparent_data_encryption_key_vault_key_id               = local.mssql_database[each.key].transparent_data_encryption_key_vault_key_id
+  transparent_data_encryption_key_automatic_rotation_enabled = local.mssql_database[each.key].transparent_data_encryption_key_automatic_rotation_enabled
+  zone_redundant                                             = local.mssql_database[each.key].zone_redundant
+
+  dynamic "import" {
+    for_each = try(length([for v in values(local.mssql_database[each.key].import) : v if v != null]) > 0, false) ? [1] : []
+
+    content {
+      storage_uri                  = local.mssql_database[each.key].import.storage_uri
+      storage_key                  = local.mssql_database[each.key].import.storage_key
+      storage_key_type             = local.mssql_database[each.key].import.storage_key_type
+      administrator_login          = local.mssql_database[each.key].import.administrator_login
+      administrator_login_password = local.mssql_database[each.key].import.administrator_login_password
+      authentication_type          = local.mssql_database[each.key].import.authentication_type
+      storage_account_id           = local.mssql_database[each.key].import.storage_account_id
+    }
+  }
+
+  dynamic "identity" {
+    for_each = try(
+      local.mssql_database[each.key].identity.type != null &&
+      local.mssql_database[each.key].identity.type != "",
+      false
+    ) ? [1] : []
+
+    content {
+      type         = local.mssql_database[each.key].identity.type
+      identity_ids = local.mssql_database[each.key].identity.identity_ids
+    }
+  }
 
   dynamic "threat_detection_policy" {
-    for_each = local.mssql_database[each.key].threat_detection_policy.state != "" ? [1] : []
+    for_each = try(local.mssql_database[each.key].threat_detection_policy.state != "", false) ? [1] : []
 
     content {
       state                      = local.mssql_database[each.key].threat_detection_policy.state
@@ -297,23 +393,25 @@ resource "azurerm_mssql_database" "mssql_database" {
   }
 
   dynamic "long_term_retention_policy" {
-    for_each = length(compact([
+    for_each = try(length([for v in [
       local.mssql_database[each.key].long_term_retention_policy.weekly_retention,
       local.mssql_database[each.key].long_term_retention_policy.monthly_retention,
       local.mssql_database[each.key].long_term_retention_policy.yearly_retention,
-      local.mssql_database[each.key].long_term_retention_policy.week_of_year
-    ])) > 0 ? [1] : []
+      local.mssql_database[each.key].long_term_retention_policy.week_of_year,
+      local.mssql_database[each.key].long_term_retention_policy.immutable_backups_enabled
+    ] : v if v != null]) > 0, false) ? [1] : []
 
     content {
-      weekly_retention  = local.mssql_database[each.key].long_term_retention_policy.weekly_retention
-      monthly_retention = local.mssql_database[each.key].long_term_retention_policy.monthly_retention
-      yearly_retention  = local.mssql_database[each.key].long_term_retention_policy.yearly_retention
-      week_of_year      = local.mssql_database[each.key].long_term_retention_policy.week_of_year
+      weekly_retention          = local.mssql_database[each.key].long_term_retention_policy.weekly_retention
+      monthly_retention         = local.mssql_database[each.key].long_term_retention_policy.monthly_retention
+      yearly_retention          = local.mssql_database[each.key].long_term_retention_policy.yearly_retention
+      week_of_year              = local.mssql_database[each.key].long_term_retention_policy.week_of_year
+      immutable_backups_enabled = local.mssql_database[each.key].long_term_retention_policy.immutable_backups_enabled
     }
   }
 
   dynamic "short_term_retention_policy" {
-    for_each = local.mssql_database[each.key].short_term_retention_policy.retention_days != null ? [1] : []
+    for_each = try(local.mssql_database[each.key].short_term_retention_policy.retention_days != null, false) ? [1] : []
 
     content {
       retention_days           = local.mssql_database[each.key].short_term_retention_policy.retention_days
