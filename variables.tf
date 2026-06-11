@@ -76,15 +76,19 @@ locals {
   default = {
     // MSSQL resources
     mssql_server = {
-      name                                 = ""
-      version                              = "12.0"
-      administrator_login                  = null
-      administrator_login_password         = null
-      connection_policy                    = null
-      minimum_tls_version                  = null
-      public_network_access_enabled        = null
-      outbound_network_restriction_enabled = null
-      primary_user_assigned_identity_id    = null
+      name                                         = ""
+      version                                      = "12.0"
+      administrator_login                          = null
+      administrator_login_password                 = null
+      administrator_login_password_wo              = null
+      administrator_login_password_wo_version      = null
+      connection_policy                            = null
+      express_vulnerability_assessment_enabled     = null
+      minimum_tls_version                          = null
+      public_network_access_enabled                = false // set secure default
+      outbound_network_restriction_enabled         = null
+      primary_user_assigned_identity_id            = null
+      transparent_data_encryption_key_vault_key_id = null
       identity = {
         type         = ""
         identity_ids = null
@@ -99,32 +103,53 @@ locals {
       sql_authentication_disabled = false
     }
     mssql_database = {
-      name                                = ""
-      auto_pause_delay_in_minutes         = null
-      create_mode                         = null
-      creation_source_database_id         = null
-      collation                           = null
-      elastic_pool_id                     = null
-      geo_backup_enabled                  = null
-      ledger_enabled                      = null
-      license_type                        = null
-      max_size_gb                         = null
-      min_capacity                        = null
-      restore_point_in_time               = null
-      recover_database_id                 = null
-      restore_dropped_database_id         = null
-      read_replica_count                  = null
-      read_scale                          = null
-      sample_name                         = null
-      sku_name                            = null
-      storage_account_type                = null
-      transparent_data_encryption_enabled = null
-      zone_redundant                      = null
+      name                                                       = ""
+      auto_pause_delay_in_minutes                                = null
+      create_mode                                                = null
+      creation_source_database_id                                = null
+      collation                                                  = null
+      elastic_pool_id                                            = null
+      enclave_type                                               = null
+      geo_backup_enabled                                         = null
+      maintenance_configuration_name                             = null
+      ledger_enabled                                             = null
+      license_type                                               = null
+      max_size_gb                                                = null
+      min_capacity                                               = null
+      restore_point_in_time                                      = null
+      recover_database_id                                        = null
+      recovery_point_id                                          = null
+      restore_dropped_database_id                                = null
+      restore_long_term_retention_backup_id                      = null
+      read_replica_count                                         = null
+      read_scale                                                 = null
+      sample_name                                                = null
+      secondary_type                                             = null
+      sku_name                                                   = null
+      storage_account_type                                       = null
+      transparent_data_encryption_enabled                        = null
+      transparent_data_encryption_key_vault_key_id               = null
+      transparent_data_encryption_key_automatic_rotation_enabled = null
+      zone_redundant                                             = null
+      import = {
+        storage_uri                  = null
+        storage_key                  = null
+        storage_key_type             = null
+        administrator_login          = null
+        administrator_login_password = null
+        authentication_type          = null
+        storage_account_id           = null
+      }
+      identity = {
+        type         = ""
+        identity_ids = null
+      }
       long_term_retention_policy = {
-        weekly_retention  = null
-        monthly_retention = null
-        yearly_retention  = null
-        week_of_year      = null
+        weekly_retention          = null
+        monthly_retention         = null
+        yearly_retention          = null
+        week_of_year              = null
+        immutable_backups_enabled = null
       }
       short_term_retention_policy = {
         retention_days           = null
@@ -159,12 +184,15 @@ locals {
       name                              = ""
       administrator_login               = null
       administrator_password            = null
+      administrator_password_wo         = null
+      administrator_password_wo_version = null
       backup_retention_days             = null
       create_mode                       = "Default"
       delegated_subnet_id               = null
       geo_redundant_backup_enabled      = null
       point_in_time_restore_time_in_utc = null
       private_dns_zone_id               = null
+      public_network_access             = "Disabled" // set secure default
       replication_role                  = null
       sku_name                          = null
       source_server_id                  = null
@@ -175,21 +203,27 @@ locals {
         primary_user_assigned_identity_id    = null
         geo_backup_key_vault_key_id          = null
         geo_backup_user_assigned_identity_id = null
+        managed_hsm_key_id                   = null
       }
       high_availability = {
+        mode                      = null
         standby_availability_zone = null
       }
-      identity = {}
+      identity = {
+        type         = null
+        identity_ids = null
+      }
       maintenance_window = {
         day_of_week  = null
         start_hour   = null
         start_minute = null
       }
       storage = {
-        auto_grow_enabled  = null
-        io_scaling_enabled = null
-        iops               = null
-        size_gb            = null
+        auto_grow_enabled   = null
+        io_scaling_enabled  = null
+        iops                = null
+        log_on_disk_enabled = null
+        size_gb             = null
       }
       tags = {}
     }
@@ -211,27 +245,52 @@ locals {
       name                              = ""
       administrator_login               = null
       administrator_password            = null
+      administrator_password_wo         = null
+      administrator_password_wo_version = null
       backup_retention_days             = null
       create_mode                       = "Default"
       delegated_subnet_id               = null
       geo_redundant_backup_enabled      = null
       point_in_time_restore_time_in_utc = null
       private_dns_zone_id               = null
+      public_network_access_enabled     = false // set secure default
       replication_role                  = null
       sku_name                          = null
       source_server_id                  = null
       auto_grow_enabled                 = true
       storage_mb                        = null
+      storage_tier                      = null
       version                           = null
       zone                              = null
-      authentication                    = {}
-      customer_managed_key              = {}
+      authentication = {
+        active_directory_auth_enabled = null
+        password_auth_enabled         = null
+        tenant_id                     = null
+      }
+      cluster = {
+        size                  = null
+        default_database_name = null
+      }
+      customer_managed_key = {
+        key_vault_key_id                     = null
+        primary_user_assigned_identity_id    = null
+        geo_backup_key_vault_key_id          = null
+        geo_backup_user_assigned_identity_id = null
+      }
       high_availability = {
+        mode                      = null
         standby_availability_zone = null
       }
-      identity           = {}
-      maintenance_window = {}
-      tags               = {}
+      identity = {
+        type         = null
+        identity_ids = null
+      }
+      maintenance_window = {
+        day_of_week  = null
+        start_hour   = null
+        start_minute = null
+      }
+      tags = {}
     }
     postgresql_flexible_server_configuration = {
       name = ""
@@ -290,7 +349,7 @@ locals {
     mssql_database => merge(
       local.mssql_database_values[mssql_database],
       {
-        for config in ["threat_detection_policy", "long_term_retention_policy", "short_term_retention_policy"] :
+        for config in ["import", "identity", "threat_detection_policy", "long_term_retention_policy", "short_term_retention_policy"] :
         config => merge(local.default.mssql_database[config], local.mssql_database_values[mssql_database][config])
       }
     )
@@ -345,6 +404,7 @@ locals {
       {
         for config in [
           "authentication",
+          "cluster",
           "customer_managed_key",
           "high_availability",
           "identity",
